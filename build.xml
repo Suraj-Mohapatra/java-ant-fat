@@ -1,34 +1,59 @@
 <project name="java-ant-fat" default="jar" basedir=".">
-    <property name="src.dir" location="src"/>
-    <property name="build.dir" location="build"/>
-    <property name="dist.dir" location="dist"/>
-    <property name="lib.dir" location="lib"/>    
-    <property name="main-class" value="com.uglyeagle.Main"/>
+    <property name="src.dir" location="src" />
+    <property name="build.dir" location="build" />
+    <property name="dist.dir" location="dist" />
+    <property name="lib.dir" location="lib" />
+    <property name="main-class" value="com.uglyeagle.Main" />
 
     <path id="compile.classpath">
-        <fileset dir="${lib.dir}" includes="**/*.jar"/>
+        <fileset dir="${lib.dir}" includes="**/*.jar" />
     </path>
 
     <target name="clean">
-        <delete dir="${build.dir}"/>
-        <delete dir="${dist.dir}"/>
+        <delete dir="${build.dir}" />
+        <delete dir="${dist.dir}" />
     </target>
 
     <target name="compile">
-        <mkdir dir="${build.dir}"/>
-        <javac srcdir="${src.dir}" destdir="${build.dir}" includeantruntime="false" classpathref="compile.classpath"/>
+        <mkdir dir="${build.dir}" />
+        <javac srcdir="${src.dir}" destdir="${build.dir}" includeantruntime="false"
+            classpathref="compile.classpath" />
     </target>
 
     <target name="jar" depends="compile">
-        <mkdir dir="${dist.dir}"/>
+        <mkdir dir="${dist.dir}" />
         <!-- Create fat jar including all lib jars -->
-        <jar destfile="${dist.dir}/java-ant-fat.jar" >
+        <jar destfile="${dist.dir}/java-ant-fat.jar">
             <manifest>
-                <attribute name="Main-Class" value="${main-class}"/>
-                <attribute name="Class-Path" value="."/>
+                <attribute name="Main-Class" value="${main-class}" />
+                <attribute name="Class-Path" value="." />
             </manifest>
-            <fileset dir="${build.dir}"/>
-            <zipgroupfileset dir="${lib.dir}" includes="*.jar"/>
+            <fileset dir="${build.dir}" />
+            <zipgroupfileset dir="${lib.dir}" includes="*.jar" />
         </jar>
     </target>
+
+    <!-- runs the application using ant run -->
+    <target name="run" depends="jar">
+        <java jar="${dist.dir}/java-ant-fat.jar" fork="true" />
+    </target>
+
+    <!-- builds the source ant src-jar -->
+    <target name="src-jar">
+        <mkdir dir="${dist.dir}" />
+        <jar destfile="${dist.dir}/java-ant-fat-sources.jar" basedir="${src.dir}" />
+    </target>
+
+    <!--<target
+    name="javadoc">
+        <mkdir dir="${dist.dir}/javadoc" />
+        <javadoc sourcepath="${src.dir}" destdir="${dist.dir}/javadoc"
+            packagenames="com.uglyeagle.*" />
+    </target>-->
+
+    <!--<java
+    jar="${dist.dir}/java-ant-fat.jar" fork="true">
+    <arg value="someArgument"/>
+    </java>-->
+
 </project>
